@@ -1,6 +1,14 @@
-- hosts: web
+- hosts: host
+  connection: local
+  gather_facts: False
+  vars_files:                                                             
+    - vars/vars.yml
+  tasks:
+    - include_tasks: tasks/ec2.yml
+    - include_tasks: tasks/ec2-connect.yml
+
+- hosts: web  
   vars_files:
     - vars/vars.yml
   tasks:
-    - include_tasks: tasks/gitlab-initial.yml
-
+    - include_tasks: tasks/wordpress-ap.yml
