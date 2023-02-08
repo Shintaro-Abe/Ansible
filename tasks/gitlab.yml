@@ -1,0 +1,93 @@
+- name: Upgrade yum
+  yum:
+    name: "*"
+    state: latest    
+  become: yes
+
+- name: Installation a list of packages
+  yum:
+    name: 
+      - curl
+      - policycoreutils-python
+      - openssh-server
+      - openssh-clients
+      - perl
+      - firewalld
+    state: latest
+  become: yes
+
+- name: Starting sshd
+  service:
+    name: sshd
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Starting firewalld
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Add firewalld http roule
+  firewalld:
+    service: http
+    permanent: yes
+    state: enabled
+  become: yes
+
+- name: Add firewalld https roule
+  firewalld:
+    service: https
+    permanent: yes
+    state: enabled
+  become: yes
+
+- name: Starting firewalld
+  service:
+    name: firewalld
+    state: reloaded
+  become: yes
+
+- name: Installation postfix
+  yum:
+    name: postfix
+    state: latest
+  become: yes
+
+- name: Starting postfix
+  service:
+    name: postfix
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Download script.rpm.sh
+  get_url: 
+    url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.rpm.sh
+    dest: /usr/local/src
+  become: yes
+
+- name: Run script.rpm.sh
+  shell: "bash script.rpm.sh"
+  args:
+    chdir: /usr/local/src
+  become: yes
+
+- name: Installation gitlab-ee
+  yum:
+    name: gitlab-ee
+    state: latest
+  become: yes    
+  environment:
+    EXTERNAL_URL: "{{ gitlab_url }}"
+    GITLAB_ROOT_PASSWORD: "{{ gitlab_password }}"
+
+  
+- name: Information
+  debug:
+    msg:
+    - " Access url : {{ gitlab_url }} "
+    - " User name : root " 
+    - " Root password : {{ gitlab_password }} "

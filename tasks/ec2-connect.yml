@@ -1,0 +1,5 @@
+- name: Wait for SSH to come up
+  delegate_to: "{{ private_ip }}"
+  wait_for_connection:
+    delay: 60
+    timeout: 320

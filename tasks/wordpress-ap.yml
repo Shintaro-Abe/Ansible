@@ -1,0 +1,91 @@
+- name: Installing mysql & MySQL-python
+  yum:
+    name:
+      - mysql
+      - MySQL-python
+    state: latest
+  become: yes
+
+- name: Database user with password and all database privileges and 'WITH GRANT OPTION'
+  mysql_user:
+    login_host: "{{ login_host }}"
+    login_user: "{{ username }}"
+    login_password: "{{ password }}"
+    name: "{{ wordpress_user }}"
+    password: "{{ wordpress_user_pass }}"
+    host: '%'
+    priv: '{{ db_name }}.*:ALL,GRANT'  
+
+- name: Download the latest version of Wordpress
+  get_url: 
+    url: https://ja.wordpress.org/latest-ja.tar.gz
+    dest: /tmp/wordpress.tar.gz
+
+- name: Unarchive Wordpress into /home/ec2-user/
+  unarchive:
+    src: /tmp/wordpress.tar.gz
+    dest: /home/ec2-user/
+    remote_src: yes
+    
+- name: Delete the archive
+  file:
+    path: /tmp/wordpress.tar.gz
+    state: absent
+
+- name: Create wp-config.php
+  copy:
+    src: /home/ec2-user/wordpress/wp-config-sample.php
+    dest: /home/ec2-user/wordpress/wp-config.php
+    remote_src: yes
+  become: yes
+
+- name: replace text file 'database_name' content 
+  replace:
+    dest: /home/ec2-user/wordpress/wp-config.php
+    regexp: 'database_name_here'
+    replace: "{{ db_name }}"
+  become: yes
+
+- name: replace text file 'username' content
+  replace:
+    dest: /home/ec2-user/wordpress/wp-config.php  
+    regexp: 'username_here'
+    replace: "{{ wordpress_user }}"
+  become: yes
+
+- name: replace text file 'password' content
+  replace:
+    dest: /home/ec2-user/wordpress/wp-config.php  
+    regexp: 'password_here'
+    replace: "{{ wordpress_user_pass }}"
+  become: yes
+
+- name: replace text file 'localhost' content
+  replace: 
+    dest: /home/ec2-user/wordpress/wp-config.php
+    regexp: 'localhost'
+    replace: "{{ login_host }}"
+  become: yes
+
+- name: Installing lamp-mariadb
+  shell: amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2
+  become: yes
+
+- name: Moving wordpress directry
+  copy:
+    src: /home/ec2-user/wordpress/
+    dest: /var/www/html/
+    remote_src: yes
+  become: yes
+
+- name: Delete the source file
+  file:
+    path: /home/ec2-user/wordpress/
+    state: absent    
+  become: yes
+    
+- name: Restart httpd
+  service:
+    name: httpd
+    state: restarted
+  become: yes

@@ -1,0 +1,21 @@
+- name: creating EC2
+  ec2:
+    key_name: abetest
+    vpc_subnet_id: "{{ vpc_subnet_id }}"
+    instance_type: "{{ instance_type }}"
+    assign_public_ip: yes
+    image: ami-0bba69335379e17f8
+    group: "{{ group }}"
+    private_ip: "{{ private_ip }}"
+    region: ap-northeast-1
+    termination_protection: no
+    ebs_optimized: false
+    volumes:
+    - device_name: /dev/xvda
+      volume_type: gp2
+      volume_size: 8
+      delete_on_termination: true
+    count_tag:
+      Hostname: Hostname
+    instance_tags:
+      Name: "{{ Name }}"

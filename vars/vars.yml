@@ -1,0 +1,26 @@
+#Variables of EC2&WEB server
+vpc_subnet_id: subnet-0f94a01bdaacf8038
+group: ansible-network
+Name: nginx-server
+instance_type: t2.micro
+private_ip: 10.0.10.80
+
+#Variables of DB & other
+instance_name: word
+db_engine: MySQL
+db_instance_type: db.t3.micro
+username: abetest
+password: abetestdb
+db_name: wordpress
+subnet: ansible-subnet
+parameter_group: ansible-parameter
+option_group: ansible-option
+vpc_security_groups: sg-0ae529546c737d690
+tags_Environment: testing
+login_host: word.cisneq6hcd4s.ap-northeast-1.rds.amazonaws.com
+wordpress_user: wordpress
+wordpress_user_pass: wordpress-pass
+jupyter_pass: abetest
+gitlab_url: http://18.183.76.26
+gitlab_password: abetest9801
+

@@ -1,0 +1,49 @@
+
+- name: Enable to install pythonb3.8
+  shell: "amazon-linux-extras enable python3.8"
+  become: yes
+
+- name: Upgrade yum
+  yum:
+    name: "*"
+    state: latest    
+  become: yes
+
+- name: Installation of python3.8 & pip
+  yum:
+    name:
+      - python38
+      - pip
+    state: latest
+  become: yes
+
+- name: Installation of pexpect  
+  pip:
+    name: pexpect
+    state: latest 
+
+- name: Upgrade pip3
+  pip:
+    name: pip
+    executable: pip3
+    state: latest
+    
+- name: Instalation Jupyter notebook
+  pip:
+    name: jupyter
+    executable: pip3
+    state: latest 
+
+- name: Password Registration
+  expect:
+    command: "jupyter notebook password"
+    responses: 
+      "Enter password: ": "{{ jupyter_pass }}"
+      "Verify password: ": "{{ jupyter_pass }}"
+  environment:
+    PATH: /home/ec2-user/.local/bin:{{ ansible_env.PATH }}
+    
+- name: Config file creation
+  command: "jupyter notebook --generate-config"
+  environment:
+    PATH: /home/ec2-user/.local/bin:{{ ansible_env.PATH }}      
