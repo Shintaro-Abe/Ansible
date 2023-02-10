@@ -6,21 +6,21 @@ instance_type: t2.micro
 private_ip: 10.0.10.80
 
 #Variables of DB & other
-instance_name: word
+instance_name: RDS_Name
 db_engine: MySQL
 db_instance_type: db.t3.micro
-username: abetest
-password: abetestdb
-db_name: wordpress
-subnet: ansible-subnet
-parameter_group: ansible-parameter
-option_group: ansible-option
+username: Root_User_Name
+password: Root_User_Pass
+db_name: DB_Name
+subnet: Any_Subnet_Group
+parameter_group: Any_Parameter_Group
+option_group: Any_Option_Group
 vpc_security_groups: sg-0ae529546c737d690
 tags_Environment: testing
-login_host: word.cisneq6hcd4s.ap-northeast-1.rds.amazonaws.com
-wordpress_user: wordpress
-wordpress_user_pass: wordpress-pass
-jupyter_pass: abetest
-gitlab_url: http://18.183.76.26
-gitlab_password: abetest9801
+login_host: RDS_Endpoint
+wordpress_user: DB_User_Name
+wordpress_user_pass: DB_User_Pass
+jupyter_pass: Jupyter_User_Pass
+gitlab_url: http://xxx.xxx.xxx.xxx
+gitlab_password: Gitlab_Root_User_Pass
 
