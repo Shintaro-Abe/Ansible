@@ -1,36 +1,31 @@
+#dnfのアップデート
 - name: upgrade all packages
   dnf:
     name: "*"
     state: latest
   become: yes
 
-- name: install the latest version of Apache
-  dnf:
-    name: postgresql15
-    state: latest
-  become: yes- name: upgrade all packages
-  dnf:
-    name: "*"
-    state: latest
-  become: yes
-
+#postgresql15のイントール
 - name: install the latest version of postgresql15
   dnf:
     name: postgresql15
     state: latest
   become: yes
 
+#pipのイントール
 - name: install the latest version of pip
   dnf:
     name: pip
     state: latest
   become: yes
 
+#psycopg2のイントール
 - name: install the latest version of psycopg2
   pip:
     name: psycopg2-binary
     state: latest 
 
+#ユーザーの作成
 - name: Create abetest2 user
   postgresql_user:
     login_host: postgre.cisneq6hcd4s.ap-northeast-1.rds.amazonaws.com
@@ -41,3 +36,12 @@
     db: postgredb
     priv: ALL
     role_attr_flags: CREATEDB,CREATEROLE,NOSUPERUSER
+
+#スキーマの作成
+- name: Create a new schema with name acme in test database
+  postgresql_schema:
+    login_host: postgre.cisneq6hcd4s.ap-northeast-1.rds.amazonaws.com
+    login_user: abetest2
+    login_password: abetestpass
+    db: postgredb
+    name: abetest2
