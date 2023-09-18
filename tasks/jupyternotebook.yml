@@ -1,33 +1,49 @@
-- name: upgrade all packages
-  dnf:
+
+- name: Enable to install pythonb3.8
+  shell: "amazon-linux-extras enable python3.8"
+  become: yes
+
+- name: Upgrade yum
+  yum:
     name: "*"
+    state: latest    
+  become: yes
+
+- name: Installation of python3.8 & pip
+  yum:
+    name:
+      - python38
+      - pip
     state: latest
   become: yes
 
-- name: install the latest version of postgresql15
-  dnf:
-    name: postgresql15
-    state: latest
-  become: yes
-
-- name: install the latest version of pip
-  dnf:
-    name: pip
-    state: latest
-  become: yes
-
-- name: install the latest version of psycopg2
+- name: Installation of pexpect  
   pip:
-    name: psycopg2-binary
+    name: pexpect
     state: latest 
 
-- name: Create abetest2 user
-  postgresql_user:
-    login_host: postgre.cisneq6hcd4s.ap-northeast-1.rds.amazonaws.com
-    login_user: abetest
-    login_password: abetest9801
-    name: abetest2
-    password: abetestpass
-    db: postgredb
-    priv: ALL
-    role_attr_flags: CREATEDB,CREATEROLE,NOSUPERUSER
+- name: Upgrade pip3
+  pip:
+    name: pip
+    executable: pip3
+    state: latest
+    
+- name: Instalation Jupyter notebook
+  pip:
+    name: jupyter
+    executable: pip3
+    state: latest 
+
+- name: Password Registration
+  expect:
+    command: "jupyter notebook password"
+    responses: 
+      "Enter password: ": "{{ jupyter_pass }}"
+      "Verify password: ": "{{ jupyter_pass }}"
+  environment:
+    PATH: /home/ec2-user/.local/bin:{{ ansible_env.PATH }}
+    
+- name: Config file creation
+  command: "jupyter notebook --generate-config"
+  environment:
+    PATH: /home/ec2-user/.local/bin:{{ ansible_env.PATH }}      
